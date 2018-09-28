@@ -73,15 +73,16 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
                         try
                         {
                             var result = await healthCheck.CheckHealthAsync(context, cancellationToken);
+                            var duration = stopwatch.GetElapsedTime();
 
                             entry = new HealthReportEntry(
                                 status: result.Result ? HealthStatus.Healthy : registration.FailureStatus,
                                 description: result.Description,
-                                duration: stopwatch.GetElapsedTime(),
+                                duration: duration,
                                 exception: result.Exception,
                                 data: result.Data);
 
-                            Log.HealthCheckEnd(_logger, registration, entry, stopwatch.GetElapsedTime());
+                            Log.HealthCheckEnd(_logger, registration, entry, duration);
                             Log.HealthCheckData(_logger, registration, entry);
                         }
 

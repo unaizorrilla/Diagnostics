@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
         /// <param name="duration">A value indicating the health execution duration.</param>
         /// <param name="exception">An <see cref="Exception"/> representing the exception that was thrown when checking for status (if any).</param>
         /// <param name="data">Additional key-value pairs describing the health of the component.</param>
-        public HealthReportEntry(HealthStatus status, string description,TimeSpan duration, Exception exception, IReadOnlyDictionary<string, object> data)
+        public HealthReportEntry(HealthStatus status, string description, TimeSpan duration, Exception exception, IReadOnlyDictionary<string, object> data)
         {
             Status = status;
             Description = description;

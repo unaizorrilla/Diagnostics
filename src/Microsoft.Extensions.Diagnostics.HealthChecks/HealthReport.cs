@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Microsoft.Extensions.Diagnostics.HealthChecks
 {
@@ -16,7 +15,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
         /// Create a new <see cref="HealthReport"/> from the specified results.
         /// </summary>
         /// <param name="entries">A <see cref="IReadOnlyDictionary{TKey, T}"/> containing the results from each health check.</param>
-        /// <param name="totalDuration">A value indicating the total duration of executing <paramref name="entries"/>.</param>
+        /// <param name="totalDuration">A value indicating the time the health check service took to execute.</param>
         public HealthReport(IReadOnlyDictionary<string, HealthReportEntry> entries, TimeSpan totalDuration)
         {
             Entries = entries;
@@ -40,7 +39,7 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
         public HealthStatus Status { get; }
 
         /// <summary>
-        /// Gets the total duration of executing a group of <see cref="IHealthCheck"/> instances.
+        /// Gets the time the health check service took to execute.
         /// </summary>
         public TimeSpan TotalDuration { get; }
 
