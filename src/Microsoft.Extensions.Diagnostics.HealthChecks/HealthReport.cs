@@ -1,7 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Extensions.Diagnostics.HealthChecks
 {
@@ -14,10 +16,12 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
         /// Create a new <see cref="HealthReport"/> from the specified results.
         /// </summary>
         /// <param name="entries">A <see cref="IReadOnlyDictionary{TKey, T}"/> containing the results from each health check.</param>
-        public HealthReport(IReadOnlyDictionary<string, HealthReportEntry> entries)
+        /// <param name="totalDuration">A value indicating the total duration of executing <paramref name="entries"/>.</param>
+        public HealthReport(IReadOnlyDictionary<string, HealthReportEntry> entries, TimeSpan totalDuration)
         {
             Entries = entries;
             Status = CalculateAggregateStatus(entries.Values);
+            TotalDuration = totalDuration;
         }
 
         /// <summary>
@@ -34,6 +38,11 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
         /// will be the most servere status reported by a health check. If no checks were executed, the value is always <see cref="HealthStatus.Healthy"/>.
         /// </summary>
         public HealthStatus Status { get; }
+
+        /// <summary>
+        /// Gets the total duration of executing a group of <see cref="IHealthCheck"/> instances.
+        /// </summary>
+        public TimeSpan TotalDuration { get; }
 
         private HealthStatus CalculateAggregateStatus(IEnumerable<HealthReportEntry> entries)
         {

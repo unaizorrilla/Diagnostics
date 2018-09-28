@@ -75,10 +75,11 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
                             var result = await healthCheck.CheckHealthAsync(context, cancellationToken);
 
                             entry = new HealthReportEntry(
-                                result.Result ? HealthStatus.Healthy : registration.FailureStatus,
-                                result.Description,
-                                result.Exception,
-                                result.Data);
+                                status: result.Result ? HealthStatus.Healthy : registration.FailureStatus,
+                                description: result.Description,
+                                duration: stopwatch.GetElapsedTime(),
+                                exception: result.Exception,
+                                data: result.Data);
 
                             Log.HealthCheckEnd(_logger, registration, entry, stopwatch.GetElapsedTime());
                             Log.HealthCheckData(_logger, registration, entry);
@@ -87,7 +88,13 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
                         // Allow cancellation to propagate.
                         catch (Exception ex) when (ex as OperationCanceledException == null)
                         {
-                            entry = new HealthReportEntry(HealthStatus.Failed, ex.Message, ex, data: null);
+                            entry = new HealthReportEntry(
+                                status: HealthStatus.Failed,
+                                description: ex.Message,
+                                duration: stopwatch.GetElapsedTime(),
+                                exception: ex,
+                                data: null);
+
                             Log.HealthCheckError(_logger, registration, ex, stopwatch.GetElapsedTime());
                         }
 
@@ -95,8 +102,9 @@ namespace Microsoft.Extensions.Diagnostics.HealthChecks
                     }
                 }
 
-                var report = new HealthReport(entries);
-                Log.HealthCheckProcessingEnd(_logger, report.Status, totalTime.GetElapsedTime());
+                var totalElapsedTime = totalTime.GetElapsedTime();
+                var report = new HealthReport(entries, totalElapsedTime);
+                Log.HealthCheckProcessingEnd(_logger, report.Status, totalElapsedTime);
                 return report;
             }
         }
